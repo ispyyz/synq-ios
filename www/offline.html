@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>SYNQ</title>
+<style>
+html,body{margin:0;height:100%;background:#0A0A0B;color:#F2F2F2;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;box-sizing:border-box;text-align:center}
+.m{width:64px;height:64px;border-radius:16px;background:#fff;color:#0A0A0B;display:grid;place-items:center;font-weight:800;letter-spacing:.04em}
+h1{font-size:20px;margin:6px 0 0}p{margin:0;color:#A1A1AA;max-width:300px}
+button{margin-top:10px;height:44px;padding:0 22px;border-radius:12px;border:0;background:#fff;color:#0A0A0B;font-weight:700;font-size:15px}
+</style></head><body><main>
+<div class="m">SYNQ</div>
+<h1 id="t">You are offline</h1>
+<p id="d">SYNQ needs the internet to open your workspace. Check your connection and try again.</p>
+<button id="b" onclick="location.href='https://synqsoul.com/#login'">Try again</button>
+</main>
+<script>if((navigator.language||'').startsWith('ar')){document.documentElement.dir='rtl';t.textContent='مفيش إنترنت';d.textContent='SYNQ محتاج إنترنت عشان يفتح شغلك. اتأكد من الاتصال وجرب تاني.';b.textContent='جرب تاني';}</script>
+</body></html>

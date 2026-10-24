@@ -1,0 +1,32 @@
+{
+  "appId": "com.synqsoul.app",
+  "appName": "SYNQ",
+  "webDir": "www",
+  "server": {
+    "url": "https://synqsoul.com",
+    "allowNavigation": [
+      "synqsoul.com"
+    ],
+    "errorPath": "offline.html"
+  },
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#0A0A0B",
+    "scheme": "SYNQ",
+    "limitsNavigationsToAppBoundDomains": false
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    },
+    "SplashScreen": {
+      "launchShowDuration": 600,
+      "backgroundColor": "#0A0A0B",
+      "showSpinner": false
+    }
+  }
+}

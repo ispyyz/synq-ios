@@ -1,0 +1,22 @@
+{
+  "name": "synq-ios",
+  "version": "1.0.0",
+  "description": "SYNQ iPhone app (Capacitor shell for synqsoul.com)",
+  "scripts": {
+    "sync": "cap sync ios",
+    "icons": "node assets/render.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/push-notifications": "^8.1.3",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.2"
+  },
+  "private": true
+}

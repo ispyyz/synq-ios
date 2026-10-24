@@ -1,0 +1,61 @@
+name: iOS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      upload:
+        description: "Sign and upload a build to TestFlight / App Store Connect"
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install Capacitor
+        run: npm ci && npx cap sync ios
+
+      # Every push: make sure the app compiles (no Apple account needed)
+      - name: Build for the simulator (check only)
+        if: github.event_name == 'push'
+        run: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 40
+
+      # Manual run: archive, sign with the App Store Connect API key, upload to App Store Connect
+      - name: Archive and upload
+        if: github.event_name == 'workflow_dispatch' && inputs.upload
+        env:
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+        run: |
+          set -eo pipefail
+          for v in TEAM_ID ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do [ -n "${!v}" ] || { echo "Missing secret for $v"; exit 1; }; done
+          KEY="$RUNNER_TEMP/AuthKey_${ASC_KEY_ID}.p8"; printf '%s' "$ASC_KEY_P8" > "$KEY"
+          AUTH="-allowProvisioningUpdates -authenticationKeyPath $KEY -authenticationKeyID $ASC_KEY_ID -authenticationKeyIssuerID $ASC_ISSUER_ID"
+          sed -i '' "s/TEAM_ID_PLACEHOLDER/$TEAM_ID/" ios/exportOptions.plist
+          BUILD=$((100 + GITHUB_RUN_NUMBER))
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -destination 'generic/platform=iOS' -archivePath build/SYNQ.xcarchive \
+            DEVELOPMENT_TEAM=$TEAM_ID CURRENT_PROJECT_VERSION=$BUILD $AUTH archive | tail -n 60
+          xcodebuild -exportArchive -archivePath build/SYNQ.xcarchive \
+            -exportOptionsPlist ios/exportOptions.plist -exportPath build/export $AUTH | tail -n 60
+          rm -f "$KEY"
+          echo "Uploaded build $BUILD to App Store Connect"
